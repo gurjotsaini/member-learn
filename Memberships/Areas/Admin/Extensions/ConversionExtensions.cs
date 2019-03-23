@@ -57,5 +57,40 @@ namespace Memberships.Areas.Admin.Extensions
 
             return model;
         }
+
+        // Overloaded Convert method: converts Product Items into Product Items Model
+        public static async Task<IEnumerable<ProductItemModel>> Convert(this IQueryable<ProductItem> productItems, ApplicationDbContext db)
+        {
+            if (productItems.Count().Equals(0))
+                return new List<ProductItemModel>();
+
+            return await (from pi in productItems
+                          select new ProductItemModel
+                          {
+                              // Filling collections
+                              ItemId = pi.ItemId,
+                              ProductId = pi.ProductId,
+
+                              // Fetch Title from Item that is matchin TitleId
+                              ItemTitle = db.Items.FirstOrDefault(i => i.Id.Equals(pi.ItemId)).Title,
+                              ProductTitle = db.Products.FirstOrDefault(p => p.Id.Equals(pi.ProductId)).Title
+
+                          }).ToListAsync();
+        }
+
+        // Overloaded Convert method: enable Edit View to render one Product Item as a Product Item Model Instance
+        public static async Task<ProductItemModel> Convert(this ProductItem productItem, ApplicationDbContext db)
+        {
+            var model = new ProductItemModel
+            {
+                ItemId = productItem.ItemId,
+                ProductId = productItem.ProductId,
+
+                Items = await db.Items.ToListAsync(),
+                Products = await db.Products.ToListAsync()
+            };
+
+            return model;
+        }
     }
 }
