@@ -1,2 +1,2 @@
 # member-learn
-A simple online learning site
+A simple online learning site like Udemy
