@@ -8,6 +8,7 @@ using System.Collections;
 using Memberships.Entities;
 using Memberships.Models;
 using System.Data.Entity;
+using System.Transactions;
 
 namespace Memberships.Areas.Admin.Extensions
 {
@@ -56,6 +57,83 @@ namespace Memberships.Areas.Admin.Extensions
             model.ProductTypes.Add(type);
 
             return model;
+        }
+
+        // Overloaded Convert method: converts Product Items into Product Items Model
+        public static async Task<IEnumerable<ProductItemModel>> Convert(this IQueryable<ProductItem> productItems, ApplicationDbContext db)
+        {
+            if (productItems.Count().Equals(0))
+                return new List<ProductItemModel>();
+
+            return await (from pi in productItems
+                          select new ProductItemModel
+                          {
+                              // Filling collections
+                              ItemId = pi.ItemId,
+                              ProductId = pi.ProductId,
+
+                              // Fetch Title from Item that is matchin TitleId
+                              ItemTitle = db.Items.FirstOrDefault(i => i.Id.Equals(pi.ItemId)).Title,
+                              ProductTitle = db.Products.FirstOrDefault(p => p.Id.Equals(pi.ProductId)).Title
+
+                          }).ToListAsync();
+        }
+
+        // Overloaded Convert method: enable Edit View to render one Product Item as a Product Item Model Instance
+        public static async Task<ProductItemModel> Convert(this ProductItem productItem, ApplicationDbContext db)
+        {
+            var model = new ProductItemModel
+            {
+                ItemId = productItem.ItemId,
+                ProductId = productItem.ProductId,
+
+                Items = await db.Items.ToListAsync(),
+                Products = await db.Products.ToListAsync()
+            };
+
+            return model;
+        }
+
+        // Check if old Product Id or old Item Id exists in the database
+        public static async Task<bool> CanChange(this ProductItem productItem, ApplicationDbContext db)
+        {
+            var oldPI = await db.ProductItems.CountAsync(pi => pi.ProductId.Equals(productItem.OldProductId) && pi.ItemId.Equals(productItem.OldItemId));
+            var newPI = await db.ProductItems.CountAsync(pi => pi.ProductId.Equals(productItem.ProductId) && pi.ItemId.Equals(productItem.ItemId));
+
+            return oldPI.Equals(1) && newPI.Equals(0);
+        }
+
+        // Change an existing value pair in the Product Item table & replace that value with new value pair
+        public static async Task Change(this ProductItem productItem, ApplicationDbContext db)
+        {
+            var oldProductItem = await db.ProductItems.FirstOrDefaultAsync(pi => pi.ProductId.Equals(productItem.OldProductId) && pi.ItemId.Equals(productItem.OldItemId));
+            var newProductItem = await db.ProductItems.FirstOrDefaultAsync(pi => pi.ProductId.Equals(productItem.ProductId) && pi.ItemId.Equals(productItem.ItemId));
+
+            if (oldProductItem != null && newProductItem == null)
+            {
+                newProductItem = new ProductItem
+                {
+                    ItemId = productItem.ItemId,
+                    ProductId = productItem.ProductId
+                };
+
+                using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+                {
+                    try
+                    {
+                        db.ProductItems.Remove(oldProductItem);
+                        db.ProductItems.Add(newProductItem);
+
+                        await db.SaveChangesAsync();
+
+                        transaction.Complete();
+                    }
+                    catch
+                    {
+                        transaction.Dispose();
+                    }
+                }
+            }
         }
     }
 }
