@@ -135,7 +135,7 @@ namespace Memberships.Areas.Admin.Controllers
             return RedirectToAction("Index");
         }
 
-        // Fetch Product Item , usin Item Id & Product Id and return it for Edit action
+        // Fetch from Product Item, using Item Id & Product Id and return it for Edit action
         private async Task<ProductItem> GetProductItem (int? itemId, int? productId)
         {
             try
