@@ -1,5 +1,5 @@
 ﻿@model Memberships.Areas.Admin.Models.ProductItemModel
-@using Memberships.Extensions
+@using Memberships.Areas.Admin.Models
 
 @{
     ViewBag.Title = "Details";
@@ -14,18 +14,18 @@
         <dt>
             @Html.DisplayNameFor(m=>m.ItemTitle)
         </dt>
-        <dt>
+        <dd>
             @Html.DisplayNameFor(m => m.ProductTitle)
-        </dt>
+        </dd>
         <dt>
             @Html.DisplayFor(m => m.ItemTitle)
         </dt>
-        <dt>
+        <dd>
             @Html.DisplayFor(m => m.ProductTitle)
-        </dt>
+        </dd>
     </dl>
 </div>
 <p>
-    @*@Html.Partial("_EditButtonPartial", Model.Id)*@
+    @Html.Partial("_EditButtonDetailPartial", new EditButtonModel { ItemId = Model.ItemId, ProductId = Model.ProductId })
     @Html.Partial("_BackToListButtonPartial")
 </p>
