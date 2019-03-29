@@ -11,7 +11,7 @@ namespace Memberships.Models
 
         public string Title { get; set; }
 
-        public string ItemTypeId { get; set; }
+        public int ItemTypeId { get; set; }
 
         public IEnumerable<ProductItemRow> Items { get; set; }
     }
