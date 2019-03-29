@@ -1,4 +1,5 @@
-﻿@model IEnumerable<Memberships.Models.ThumbnailAreaModel>
+﻿@model IEnumerable<ThumbnailAreaModel>
+@using Memberships.Models
 
 @{
     ViewBag.Title = "Home Page";
@@ -14,14 +15,22 @@
     }
     else
     {
-        //left Column
+        // Displayed if the user isn't logged in
+        <!--left column-->
         <div class="col-lg-9 col-md-8 col-sm-7">
-            <h2>Not Logged In!!</h2>
+            <h2>I'm not logged in</h2>
         </div>
-
-        //Right Column
+        <!--right column-->
         <div class="col-lg-3 col-md-4 col-sm-5">
-            
+
         </div>
     }
+</div>
+<div class="row">
+    <div class="col-sm-3 register-code-area">
+        @Html.Partial("_RegisterCodePartial")
+    </div>
+    <div class="col-sm-9">
+
+    </div>
 </div>
