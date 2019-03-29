@@ -1,5 +1,4 @@
 ﻿function jwVideo(video) {
-    jwPlayer("video").setup({
-        file: video
-    });
+    //Play single video  
+    jwplayer("video").setup({ file: video });
 }
