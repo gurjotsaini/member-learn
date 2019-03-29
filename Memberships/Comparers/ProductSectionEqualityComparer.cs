@@ -10,7 +10,7 @@ namespace Memberships.Comparers
     {
         public bool Equals(ProductSection section1, ProductSection section2)
         {
-            return section1.Id.Equals(section2.Id)
+            return section1.Id.Equals(section2.Id);
         }
 
         public int GetHashCode(ProductSection section)
