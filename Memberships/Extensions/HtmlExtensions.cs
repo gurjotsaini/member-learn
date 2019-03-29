@@ -15,6 +15,7 @@ namespace Memberships.Extensions
 
             // Declare the anchor tag
             var anchor = new TagBuilder("a");
+
             if (controller.Length > 0)
                 anchor.MergeAttribute("href", string.Format("/{0}/{1}/", controller, action));
             else
