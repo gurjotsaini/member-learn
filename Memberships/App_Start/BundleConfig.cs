@@ -35,7 +35,8 @@ namespace Memberships
                       "~/Scripts/JWPlayer.js",
                       "~/Scripts/RegisterCode.js",
                       "~/Scripts/RegisterUser.js",
-                      "~/Scripts/login.js"));
+                      "~/Scripts/login.js",
+                      "~/Scripts/forgot-password.js")); 
 
             bundles.Add(new StyleBundle("~/Content/membership").Include(
                       "~/Content/navbar.css",
@@ -44,7 +45,8 @@ namespace Memberships
                       "~/Content/Carret.css",
                       "~/Content/RegisterCode.css",
                       "~/Content/RegisterUser.css",
-                      "~/Content/login.css"));
+                      "~/Content/login.css",
+                      "~/Content/forgot-password.css"));
         }
     }
 }
