@@ -27,7 +27,7 @@ namespace Memberships.Controllers
         {
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
         {
             UserManager = userManager;
             SignInManager = signInManager;
@@ -39,9 +39,9 @@ namespace Memberships.Controllers
             {
                 return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
             }
-            private set 
-            { 
-                _signInManager = value; 
+            private set
+            {
+                _signInManager = value;
             }
         }
 
@@ -56,7 +56,7 @@ namespace Memberships.Controllers
                 _userManager = value;
             }
         }
-        
+
         // GET: /Account/Login
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
@@ -64,7 +64,7 @@ namespace Memberships.Controllers
             ViewBag.ReturnUrl = returnUrl;
             return View();
         }
-        
+
         // POST: /Account/Login
         [HttpPost]
         [AllowAnonymous]
@@ -93,7 +93,7 @@ namespace Memberships.Controllers
                     return View(model);
             }
         }
-        
+
         // GET: /Account/VerifyCode
         [AllowAnonymous]
         public async Task<ActionResult> VerifyCode(string provider, string returnUrl, bool rememberMe)
@@ -105,7 +105,7 @@ namespace Memberships.Controllers
             }
             return View(new VerifyCodeViewModel { Provider = provider, ReturnUrl = returnUrl, RememberMe = rememberMe });
         }
-        
+
         // POST: /Account/VerifyCode
         [HttpPost]
         [AllowAnonymous]
@@ -121,7 +121,7 @@ namespace Memberships.Controllers
             // If a user enters incorrect codes for a specified amount of time then the user account 
             // will be locked out for a specified amount of time. 
             // You can configure the account lockout settings in IdentityConfig
-            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent:  model.RememberMe, rememberBrowser: model.RememberBrowser);
+            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent: model.RememberMe, rememberBrowser: model.RememberBrowser);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -152,7 +152,8 @@ namespace Memberships.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser {
+                var user = new ApplicationUser
+                {
                     UserName = model.Email,
                     Email = model.Email,
                     FirstName = model.FirstName,
@@ -165,8 +166,8 @@ namespace Memberships.Controllers
 
                 if (result.Succeeded)
                 {
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
+                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
                     // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
@@ -181,7 +182,7 @@ namespace Memberships.Controllers
             // If we got this far, something failed, redisplay form
             return View(model);
         }
-        
+
         // GET: /Account/ConfirmEmail
         [AllowAnonymous]
         public async Task<ActionResult> ConfirmEmail(string userId, string code)
@@ -193,14 +194,14 @@ namespace Memberships.Controllers
             var result = await UserManager.ConfirmEmailAsync(userId, code);
             return View(result.Succeeded ? "ConfirmEmail" : "Error");
         }
-        
+
         // GET: /Account/ForgotPassword
         [AllowAnonymous]
         public ActionResult ForgotPassword()
         {
             return View();
         }
-        
+
         // POST: /Account/ForgotPassword
         [HttpPost]
         [AllowAnonymous]
@@ -221,21 +222,21 @@ namespace Memberships.Controllers
             // If we got this far, something failed, redisplay form
             return View(model);
         }
-        
+
         // GET: /Account/ForgotPasswordConfirmation
         [AllowAnonymous]
         public ActionResult ForgotPasswordConfirmation()
         {
             return View();
         }
-        
+
         // GET: /Account/ResetPassword
         [AllowAnonymous]
         public ActionResult ResetPassword(string code)
         {
             return code == null ? View("Error") : View();
         }
-        
+
         // POST: /Account/ResetPassword
         [HttpPost]
         [AllowAnonymous]
@@ -260,14 +261,14 @@ namespace Memberships.Controllers
             AddErrors(result);
             return View();
         }
-        
+
         // GET: /Account/ResetPasswordConfirmation
         [AllowAnonymous]
         public ActionResult ResetPasswordConfirmation()
         {
             return View();
         }
-        
+
         // POST: /Account/ExternalLogin
         [HttpPost]
         [AllowAnonymous]
@@ -277,7 +278,7 @@ namespace Memberships.Controllers
             // Request a redirect to the external login provider
             return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl }));
         }
-        
+
         // GET: /Account/SendCode
         [AllowAnonymous]
         public async Task<ActionResult> SendCode(string returnUrl, bool rememberMe)
@@ -291,7 +292,7 @@ namespace Memberships.Controllers
             var factorOptions = userFactors.Select(purpose => new SelectListItem { Text = purpose, Value = purpose }).ToList();
             return View(new SendCodeViewModel { Providers = factorOptions, ReturnUrl = returnUrl, RememberMe = rememberMe });
         }
-        
+
         // POST: /Account/SendCode
         [HttpPost]
         [AllowAnonymous]
@@ -310,7 +311,7 @@ namespace Memberships.Controllers
             }
             return RedirectToAction("VerifyCode", new { Provider = model.SelectedProvider, ReturnUrl = model.ReturnUrl, RememberMe = model.RememberMe });
         }
-        
+
         // GET: /Account/ExternalLoginCallback
         [AllowAnonymous]
         public async Task<ActionResult> ExternalLoginCallback(string returnUrl)
@@ -339,7 +340,7 @@ namespace Memberships.Controllers
                     return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = loginInfo.Email });
             }
         }
-        
+
         // POST: /Account/ExternalLoginConfirmation
         [HttpPost]
         [AllowAnonymous]
@@ -376,7 +377,7 @@ namespace Memberships.Controllers
             ViewBag.ReturnUrl = returnUrl;
             return View(model);
         }
-        
+
         // POST: /Account/LogOff
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -385,7 +386,7 @@ namespace Memberships.Controllers
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             return RedirectToAction("Index", "Home");
         }
-        
+
         // GET: /Account/ExternalLoginFailure
         [AllowAnonymous]
         public ActionResult ExternalLoginFailure()
@@ -479,14 +480,14 @@ namespace Memberships.Controllers
 
             return View(users);
         }
-        
+
         // GET: /Account/Create
         [Authorize(Roles = "Admin")]
         public ActionResult Create()
         {
             return View();
         }
-        
+
         // POST: /Account/Create
         [HttpPost]
         [Authorize(Roles = "Admin")]
@@ -526,7 +527,7 @@ namespace Memberships.Controllers
             if (userId == null || userId.Equals(string.Empty))
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }   
+            }
             ApplicationUser user = await UserManager.FindByIdAsync(userId);
             if (user == null)
             {
@@ -693,12 +694,12 @@ namespace Memberships.Controllers
                     var db = new ApplicationDbContext();
 
                     db.UserSubscriptions.Add(new UserSubscription
-                                            {
-                                                UserId = model.UserId,
-                                                SubscriptionId = model.SubscriptionId,
-                                                StartDate = DateTime.Now,
-                                                EndDate = DateTime.MaxValue
-                                            });
+                    {
+                        UserId = model.UserId,
+                        SubscriptionId = model.SubscriptionId,
+                        StartDate = DateTime.Now,
+                        EndDate = DateTime.MaxValue
+                    });
 
                     await db.SaveChangesAsync();
                 }
@@ -732,5 +733,50 @@ namespace Memberships.Controllers
 
             return RedirectToAction("Subscriptions", "Account", new { userId = userId });
         }
+
+        #region Register User
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> RegisterUserAsync(RegisterUserModel model)
+        {
+            model.AcceptUserAgreement = true;
+
+            if (ModelState.IsValid)
+            {
+                var user = new ApplicationUser
+                {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    FirstName = model.Name,
+                    IsActive = true,
+                    Registered = DateTime.Now,
+                    EmailConfirmed = true
+                };
+                var result = await UserManager.CreateAsync(user, model.Password);
+                if (result.Succeeded)
+                {
+                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+
+                    return PartialView("_RegisterUserPartial", model);
+                }
+                AddUserErrors(result);
+            }
+
+            // If we got this far, something failed, redisplay form
+            return PartialView("_RegisterUserPartial", model);
+        }
+
+        private void AddUserErrors(IdentityResult result)
+        {
+            foreach (var error in result.Errors)
+            {
+                if (error.StartsWith("Name") && error.EndsWith("is already taken."))
+                    continue;
+
+                ModelState.AddModelError("", error);
+            }
+        }
+        #endregion
     }
 }
